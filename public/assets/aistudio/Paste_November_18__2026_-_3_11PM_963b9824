@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartSupport AI — Futuristic 3D Spatial Support Suite</title>
+  <style>
+    :root {
+      --bg-base: #060913;
+      --bg-panel: #0b1120;
+      --bg-card: #0f172a;
+      --bg-card-2: #131c31;
+      --border: rgba(56, 189, 248, 0.16);
+      --border-strong: rgba(34, 211, 238, 0.38);
+      --cyan: #22d3ee;
+      --cyan-glow: rgba(34, 211, 238, 0.25);
+      --purple: #a855f7;
+      --purple-glow: rgba(168, 85, 247, 0.25);
+      --emerald: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --font-sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: var(--bg-base); color: var(--text); font-family: var(--font-sans); font-size: 14px; line-height: 1.45; overflow-x: hidden; }
+
+    /* Subtle neural dot grid */
+    body {
+      background-image:
+        radial-gradient(circle at 18% 12%, rgba(34, 211, 238, 0.08), transparent 36%),
+        radial-gradient(circle at 82% 80%, rgba(168, 85, 247, 0.08), transparent 40%),
+        radial-gradient(rgba(148, 163, 184, 0.12) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 24px 24px;
+    }
+
+    button, input, select, textarea { font-family: inherit; color: inherit; }
+    button { cursor: pointer; border: none; background: none; }
+    a { color: var(--cyan); text-decoration: none; }
+
+    /* Utility classes */
+    .hidden { display: none !important; }
+    .mono { font-family: var(--font-mono); }
+    .muted { color: var(--text-muted); }
+    .dim { color: var(--text-dim); }
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .gap-2 { gap: 8px; }
+    .gap-3 { gap: 12px; }
+    .gap-4 { gap: 16px; }
+    .grid { display: grid; }
+
+    /* Badges & Pills */
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+      background: rgba(34, 211, 238, 0.1); color: var(--cyan); border: 1px solid rgba(34, 211, 238, 0.25);
+    }
+    .pill.purple { background: rgba(168, 85, 247, 0.12); color: #c084fc; border-color: rgba(168, 85, 247, 0.3); }
+    .pill.emerald { background: rgba(16, 185, 129, 0.12); color: #34d399; border-color: rgba(16, 185, 129, 0.3); }
+    .pill.amber { background: rgba(245, 158, 11, 0.12); color: #fbbf24; border-color: rgba(245, 158, 11, 0.3); }
+    .pill.rose { background: rgba(244, 63, 94, 0.12); color: #fb7185; border-color: rgba(244, 63, 94, 0.3); }
+
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); display: inline-block; }
+    .dot.emerald { background: var(--emerald); box-shadow: 0 0 8px var(--emerald); }
+    .dot.amber { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+    .dot.rose { background: var(--rose); box-shadow: 0 0 8px var(--rose); }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 9px 16px; border-radius: 10px; font-weight: 600; font-size: 13px; transition: all 0.18s ease;
+      border: 1px solid var(--border); background: var(--bg-card-2); color: var(--text);
+    }
+    .btn:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+    .btn-primary {
+      background: linear-gradient(135deg, #22d3ee, #818cf8);
+      color: #040814; border: none; box-shadow: 0 4px 20px rgba(34, 211, 238, 0.28);
+    }
+    .btn-primary:hover { filter: brightness(1.08); box-shadow: 0 6px 26px rgba(34, 211, 238, 0.4); }
+    .btn-purple {
+      background: linear-gradient(135deg, #a855f7, #6366f1); color: #fff; border: none;
+    }
+    .btn-sm { padding: 6px 11px; font-size: 12px; border-radius: 8px; }
+
+    /* Cards & Inputs */
+    .card {
+      background: rgba(13, 19, 34, 0.88);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      backdrop-filter: blur(10px);
+    }
+    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 12px; }
+    .card-title { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+
+    .input, .select, .textarea {
+      width: 100%; background: rgba(6, 10, 20, 0.85); border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 10px; padding: 10px 12px; color: var(--text); font-size: 13px; outline: none; transition: border 0.15s;
+    }
+    .input:focus, .select:focus, .textarea:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.12); }
+    .field-label { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+
+    /* ================= AUTH / LANDING SCREENS (Screens 8 & 9) ================= */
+    .auth-shell { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 24px 16px 48px; }
+    .auth-topbar {
+      width: 100%; max-width: 480px; display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; border-radius: 14px; background: rgba(13, 19, 34, 0.9); border: 1px solid var(--border); margin-bottom: 24px;
+    }
+    .auth-container { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 18px; }
+    .auth-hero { text-align: center; }
+    .auth-hero h1 { font-size: 28px; font-weight: 800; margin: 10px 0 8px; background: linear-gradient(90deg, #fff, #67e8f9, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    .tier-card {
+      padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border); background: rgba(15, 23, 42, 0.75);
+      cursor: pointer; transition: all 0.18s; text-align: left;
+    }
+    .tier-card:hover { border-color: rgba(34, 211, 238, 0.45); }
+    .tier-card.active {
+      border-color: var(--cyan);
+      background: linear-gradient(145deg, rgba(34, 211, 238, 0.1), rgba(168, 85, 247, 0.08));
+      box-shadow: 0 0 24px rgba(34, 211, 238, 0.14);
+    }
+
+    /* ================= APP WORKSPACE SHELL (Screens 1-7) ================= */
+    .app-shell { display: grid; grid-template-columns: 248px 1fr; min-height: 100vh; }
+    .sidebar {
+      background: rgba(8, 12, 24, 0.96); border-right: 1px solid var(--border);
+      padding: 18px 14px; display: flex; flex-direction: column; justify-content: space-between; position: sticky; top: 0; height: 100vh;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px 16px; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+    .brand-icon {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      display: grid; place-items: center; font-weight: 800; color: #040814;
+    }
+    .nav-list { display: flex; flex-direction: column; gap: 4px; }
+    .nav-item {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      padding: 10px 12px; border-radius: 10px; color: var(--text-muted); font-weight: 500; font-size: 13px; transition: all 0.15s; text-align: left; width: 100%;
+    }
+    .nav-item:hover { background: rgba(34, 211, 238, 0.06); color: var(--text); }
+    .nav-item.active {
+      background: linear-gradient(90deg, rgba(34, 211, 238, 0.18), rgba(34, 211, 238, 0.03));
+      color: var(--cyan); border: 1px solid rgba(34, 211, 238, 0.28); font-weight: 600;
+    }
+
+    .main-area { display: flex; flex-direction: column; min-width: 0; }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 14px;
+      padding: 14px 24px; border-bottom: 1px solid var(--border); background: rgba(8, 12, 24, 0.85); backdrop-filter: blur(12px);
+      position: sticky; top: 0; z-index: 20;
+    }
+    .search-wrap { flex: 1; max-width: 460px; position: relative; }
+    .search-wrap input { padding-left: 34px; border-radius: 999px; background: rgba(15, 23, 42, 0.8); }
+
+    .workspace-content { padding: 24px; max-width: 1440px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+
+    /* Screen Switcher Bar (Quick Access for Reviewer / Role Switch) */
+    .role-switcher {
+      display: inline-flex; background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border); border-radius: 10px; padding: 3px; gap: 2px;
+    }
+    .role-btn { padding: 5px 10px; border-radius: 7px; font-size: 11px; font-weight: 600; color: var(--text-muted); }
+    .role-btn.active { background: rgba(34, 211, 238, 0.18); color: var(--cyan); }
+
+    /* KPI Grids */
+    .kpi-grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    .kpi-grid-5 { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+    .kpi-card { background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+    .kpi-val { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; margin: 6px 0 2px; font-family: var(--font-mono); }
+
+    /* Layout helpers */
+    .cols-2-1 { display: grid; grid-template-columns: 1.7fr 1fr; gap: 18px; }
+    .cols-1-1 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .cols-1-2 { display: grid; grid-template-columns: 320px 1fr; gap: 18px; }
+
+    /* Funnel / Milestones */
+    .steps-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .steps-row-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+    .step-box {
+      padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: rgba(15, 23, 42, 0.65);
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .step-box.done { border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.08); }
+    .step-box.current { border-color: var(--cyan); background: rgba(34, 211, 238, 0.12); box-shadow: 0 0 14px rgba(34, 211, 238, 0.15); }
+
+    /* Tables */
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim); padding: 10px 8px; border-bottom: 1px solid var(--border); }
+    .data-table td { padding: 12px 8px; border-bottom: 1px solid rgba(148, 163, 184, 0.08); font-size: 13px; vertical-align: middle; }
+    .data-table tr.clickable:hover { background: rgba(34, 211, 238, 0.06); cursor: pointer; }
+
+    /* Chat / Neural Stream */
+    .chat-box { display: flex; flex-direction: column; gap: 12px; max-height: 440px; overflow-y: auto; padding-right: 4px; }
+    .msg { padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border); background: rgba(15, 23, 42, 0.75); }
+    .msg.user { border-color: rgba(168, 85, 247, 0.35); background: rgba(168, 85, 247, 0.08); margin-left: 28px; }
+    .msg.ai { border-color: rgba(34, 211, 238, 0.3); background: rgba(12, 24, 42, 0.9); }
+
+    /* Switch toggle */
+    .toggle {
+      width: 40px; height: 22px; border-radius: 999px; background: #1e293b; border: 1px solid var(--border);
+      position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0;
+    }
+    .toggle::after {
+      content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%;
+      background: #94a3b8; transition: all 0.2s;
+    }
+    .toggle.on { background: rgba(34, 211, 238, 0.3); border-color: var(--cyan); }
+    .toggle.on::after { left: 20px; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+
+    /* Hologram SVG container */
+    .holo-card {
+      background: radial-gradient(circle at 50% 35%, rgba(34, 211, 238, 0.16), rgba(168, 85, 247, 0.1) 50%, rgba(10, 15, 30, 0.95) 85%);
+      border: 1px solid rgba(34, 211, 238, 0.28); border-radius: 14px; padding: 16px; text-align: center;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 20px; right: 20px; z-index: 99;
+      background: #0f172a; border: 1px solid var(--cyan); color: var(--text);
+      padding: 12px 16px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      display: flex; align-items: center; gap: 10px; font-size: 13px;
+    }
+
+    @media (max-width: 1024px) {
+      .app-shell { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .kpi-grid-4, .kpi-grid-5 { grid-template-columns: repeat(2, 1fr); }
+      .cols-2-1, .cols-1-1, .cols-1-2 { grid-template-columns: 1fr; }
+      .steps-row, .steps-row-5 { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== SCREEN 9: SIGNUP / INITIATE AI WORKSPACE ==================== -->
+  <section id="screen-signup" class="auth-shell hidden">
+    <div class="auth-topbar">
+      <div class="flex items-center gap-2">
+        <div class="brand-icon" style="width:28px;height:28px;font-size:12px;">S</div>
+        <div>
+          <div style="font-weight:700;font-size:13px;">SmartSupport AI</div>
+          <div class="dim mono" style="font-size:10px;">LANDING NODE</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="btn btn-primary btn-sm" onclick="goAuth('login')">Login</button>
+      </div>
+    </div>
+
+    <div class="auth-container">
+      <div class="auth-hero">
+        <span class="pill"><span class="dot"></span> Neural Onboarding • Sylvie 3D Copilot Ready</span>
+        <h1>Initiate Your AI Workspace</h1>
+        <p class="muted" style="font-size:13px;">Join over 10,000+ forward-thinking teams using autonomous 3D spatial customer intelligence.</p>
+      </div>
+
+      <div class="holo-card">
+        <div class="flex justify-between items-center" style="margin-bottom:8px;">
+          <span class="pill">Realtime Voice</span>
+          <span class="pill purple">Sub-second Fixes</span>
+        </div>
+        <svg viewBox="0 0 220 110" width="180" height="90" aria-label="Sylvie 3D Hologram">
+          <defs>
+            <linearGradient id="holoG" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#22d3ee" />
+              <stop offset="100%" stop-color="#a855f7" />
+            </linearGradient>
+          </defs>
+          <ellipse cx="110" cy="96" rx="64" ry="8" fill="none" stroke="url(#holoG)" stroke-opacity="0.5" />
+          <circle cx="110" cy="44" r="24" fill="rgba(34,211,238,0.12)" stroke="url(#holoG)" stroke-width="2" />
+          <rect x="92" y="36" width="36" height="16" rx="8" fill="#060913" stroke="#22d3ee" stroke-width="1.5" />
+          <circle cx="103" cy="44" r="3" fill="#22d3ee" />
+          <circle cx="117" cy="44" r="3" fill="#22d3ee" />
+          <path d="M84 74 C84 62, 136 62, 136 74 L130 90 L90 90 Z" fill="rgba(168,85,247,0.16)" stroke="url(#holoG)" stroke-width="1.5" />
+        </svg>
+        <div class="flex justify-between items-center" style="margin-top:6px;">
+          <span class="mono dim" style="font-size:11px;">SOC-2 Type II</span>
+          <span class="pill emerald">Sylvie Copilot: Standing By v4.0-PRO</span>
+        </div>
+        <div class="dim" style="font-size:11px;margin-top:8px;">Instant 14-day quantum trial • No credit card required</div>
+      </div>
+
+      <form class="card" onsubmit="event.preventDefault(); notify('Workspace provisioned! Redirecting to Tier Selection...'); goAuth('login');">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Biometric Key Creation</div>
+            <div class="dim" style="font-size:12px;">Configure neural agent access token</div>
+          </div>
+          <span class="pill">Level 1</span>
+        </div>
+
+        <div class="grid gap-3">
+          <div>
+            <div class="field-label"><span>Full Legal Name / Operative ID</span><span style="color:var(--cyan)">Required</span></div>
+            <input class="input" type="text" value="Alex Chen" required />
+          </div>
+          <div>
+            <div class="field-label"><span>Corporate or Personal Email</span><span style="color:var(--emerald)">SSO Linked</span></div>
+            <input class="input" type="email" value="alex.chen@quantumreach.io" required />
+          </div>
+          <div>
+            <div class="field-label"><span>Verified Mobile Signal</span><span>2FA Node</span></div>
+            <div class="flex gap-2">
+              <input class="input" style="width:72px;" value="+1" />
+              <input class="input" value="(555) 019-2834" />
+            </div>
+          </div>
+          <div>
+            <div class="field-label"><span>Biometric Passkey</span><span>AES-256</span></div>
+            <input class="input" type="password" value="••••••••••••••" required />
+            <div class="flex justify-between mono" style="font-size:10px;margin-top:5px;color:var(--cyan);">
+              <span>ENTROPY SHIELDING</span><span>98% • IMPERVIOUS</span>
+            </div>
+            <div style="height:4px;background:#1e293b;border-radius:4px;margin-top:4px;overflow:hidden;">
+              <div style="width:98%;height:100%;background:linear-gradient(90deg,#22d3ee,#a855f7);"></div>
+            </div>
+          </div>
+          <div>
+            <div class="field-label"><span>Confirm Passkey</span><span style="color:var(--emerald)">Matched</span></div>
+            <input class="input" type="password" value="••••••••••••••" required />
+          </div>
+          <label class="flex items-center gap-2 dim" style="font-size:12px;cursor:pointer;">
+            <input type="checkbox" checked /> I agree to the <a href="#">Autonomous AI Protocols</a>, Neural Privacy Policy, and SLA guarantees.
+          </label>
+          <button type="submit" class="btn btn-primary" style="width:100%;padding:12px;">CREATE ACCOUNT &amp; ACTIVATE SYLVIE →</button>
+          <div style="text-align:center;font-size:12px;" class="muted">
+            Already holding an operative key? <a href="#" onclick="event.preventDefault(); goAuth('login');">Sign In / Login →</a>
+          </div>
+          <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px;">
+            <button type="button" class="btn btn-sm" onclick="goAuth('login')">Google</button>
+            <button type="button" class="btn btn-sm" onclick="goAuth('login')">Okta ID</button>
+            <button type="button" class="btn btn-sm" onclick="goAuth('login')">GitHub</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ==================== SCREEN 8: LOGIN / SELECT ACCESS TIER ==================== -->
+  <section id="screen-login" class="auth-shell">
+    <div class="auth-topbar">
+      <div class="flex items-center gap-2">
+        <div class="brand-icon" style="width:28px;height:28px;font-size:12px;">S</div>
+        <div>
+          <div style="font-weight:700;font-size:13px;">SmartSupport AI</div>
+          <div class="dim mono" style="font-size:10px;">NEURAL GATEWAY</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="btn btn-sm" onclick="goAuth('signup')">New Workspace</button>
+      </div>
+    </div>
+
+    <div class="auth-container">
+      <div class="auth-hero">
+        <span class="pill"><span class="dot"></span> Neural Gateway • 256-Bit Quantum Link</span>
+        <h1>Select Access Tier</h1>
+        <p class="muted" style="font-size:13px;">Synchronize with Sylvie AI to initialize your personalized spatial support workspace.</p>
+      </div>
+
+      <div class="grid gap-3" id="tier-selector">
+        <div class="tier-card active" data-tier="customer" onclick="selectTier('customer')">
+          <div class="flex justify-between items-center">
+            <span class="pill">Tier 1 • Self-Service</span>
+            <span class="mono" style="font-size:11px;color:var(--emerald);">PING: 12ms</span>
+          </div>
+          <div style="font-size:16px;font-weight:700;margin:6px 0 4px;">Customer Portal</div>
+          <div class="muted" style="font-size:12px;">Resolve issues instantly, converse with 3D voice copilot Sylvie, and browse self-healing neural docs.</div>
+          <div class="mono dim" style="font-size:11px;margin-top:8px;">● Sylvie v4.0 Active</div>
+        </div>
+
+        <div class="tier-card" data-tier="staff" onclick="selectTier('staff')">
+          <div class="flex justify-between items-center">
+            <span class="pill purple">Tier 2 • Operative Desk</span>
+            <span class="mono" style="font-size:11px;color:var(--cyan);">QUEUE: 12 TICKETS</span>
+          </div>
+          <div style="font-size:16px;font-weight:700;margin:6px 0 4px;">Staff Copilot</div>
+          <div class="muted" style="font-size:12px;">Live sentiment HUD, auto-drafted neural replies, spatial ticket triage, and 1-click escalations.</div>
+          <div class="mono dim" style="font-size:11px;margin-top:8px;">● Omni-Channel Stream</div>
+        </div>
+
+        <div class="tier-card" data-tier="admin" onclick="selectTier('admin')">
+          <div class="flex justify-between items-center">
+            <span class="pill amber">Tier 3 • Root Command</span>
+            <span class="mono" style="font-size:11px;color:var(--emerald);">NODES: 64/64 ONLINE</span>
+          </div>
+          <div style="font-size:16px;font-weight:700;margin:6px 0 4px;">Admin Command</div>
+          <div class="muted" style="font-size:12px;">Cluster orchestration, LLM guardrail enforcement, hallucination heatmaps, and audit telemetry.</div>
+          <div class="mono dim" style="font-size:11px;margin-top:8px;">● Root Key Vault</div>
+        </div>
+      </div>
+
+      <form class="card" onsubmit="event.preventDefault(); enterWorkspace();">
+        <div class="card-header">
+          <div class="card-title">Biometric Credential Hub</div>
+          <span class="pill" id="selected-tier-badge">Customer</span>
+        </div>
+        <div class="grid gap-3">
+          <div>
+            <div class="field-label"><span>Authenticated User Email</span><span style="color:var(--emerald)">Verified</span></div>
+            <input id="login-email" class="input" type="email" value="alex.chen@quantumreach.io" required />
+          </div>
+          <div>
+            <div class="field-label"><span>Quantum Security Key</span><span style="color:var(--cyan)">Passkey Login?</span></div>
+            <input class="input" type="password" value="••••••••••••••" required />
+            <div class="flex justify-between mono" style="font-size:10px;margin-top:6px;color:var(--cyan);">
+              <span>Entropy Gauge:</span><span>99.8% • QUANTUM HARDENED</span>
+            </div>
+          </div>
+          <div class="flex justify-between items-center" style="font-size:12px;">
+            <label class="flex items-center gap-2 muted"><input type="checkbox" checked /> Store Biometric Seed</label>
+            <a href="#" onclick="event.preventDefault(); notify('Recovery passkey beacon dispatched.');">Forgot Key?</a>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;padding:12px;">Authenticate &amp; Enter Workspace →</button>
+          <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:8px;">
+            <button type="button" class="btn btn-sm" onclick="enterWorkspace()">Google</button>
+            <button type="button" class="btn btn-sm" onclick="enterWorkspace()">Okta SSO</button>
+            <button type="button" class="btn btn-sm" onclick="enterWorkspace()">GitHub</button>
+          </div>
+          <div style="text-align:center;font-size:12px;" class="muted">
+            Need an autonomous enterprise instance? <a href="#" onclick="event.preventDefault(); goAuth('signup');">Deploy New AI Workspace</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ==================== WORKSPACE SHELL (SCREENS 1-7) ==================== -->
+  <div id="app-shell" class="app-shell hidden">
+    <aside class="sidebar">
+      <div>
+        <div class="brand">
+          <div class="brand-icon">S</div>
+          <div>
+            <div style="font-weight:800;font-size:14px;">SmartSupport</div>
+            <div class="mono" style="font-size:10px;color:var(--cyan);">NEURAL SUITE v4.0</div>
+          </div>
+        </div>
+
+        <div class="nav-list">
+          <button class="nav-item active" data-view="dashboard" onclick="navigate('dashboard')"><span>◫ Dashboard / Overview</span></button>
+          <button class="nav-item" data-view="tracking" onclick="navigate('tracking')"><span>◎ Live Ticket Tracking</span><span class="pill" style="padding:1px 6px;font-size:10px;">#8921</span></button>
+          <button class="nav-item" data-view="create-ticket" onclick="navigate('create-ticket')"><span>＋ Create Support Ticket</span></button>
+          <button class="nav-item" data-view="chatbot" onclick="navigate('chatbot')"><span>✦ Sylvie AI Assistant</span><span class="dot emerald"></span></button>
+          <button class="nav-item" data-view="settings" onclick="navigate('settings')"><span>⚙ Profile &amp; Settings</span></button>
+        </div>
+
+        <div class="card" style="margin-top:18px;padding:12px;">
+          <div class="dim mono" style="font-size:10px;margin-bottom:8px;">WORKSPACE PERSPECTIVE</div>
+          <div class="role-switcher" style="width:100%;display:grid;grid-template-columns:repeat(3,1fr);">
+            <button class="role-btn active" data-role="customer" onclick="switchRole('customer')">Customer</button>
+            <button class="role-btn" data-role="staff" onclick="switchRole('staff')">Staff</button>
+            <button class="role-btn" data-role="admin" onclick="switchRole('admin')">Admin</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:12px;">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="brand-icon" id="sidebar-avatar" style="width:32px;height:32px;font-size:12px;border-radius:50%;">AC</div>
+            <div>
+              <div id="sidebar-user" style="font-weight:700;font-size:12px;">Alex Chen</div>
+              <div id="sidebar-role-label" class="dim" style="font-size:10px;">Customer • Tier 1</div>
+            </div>
+          </div>
+          <button class="btn btn-sm" title="Switch Account / Logout" onclick="logout()">⏻</button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main-area">
+      <header class="topbar">
+        <div class="search-wrap">
+          <input class="input" id="global-search" placeholder="Query neural knowledge, tickets, or telemetry commands..." onkeydown="if(event.key==='Enter') notify('Neural search executed for: ' + this.value)" />
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="role-switcher" style="display:flex;">
+            <button class="role-btn active" data-role="customer" onclick="switchRole('customer')">Customer</button>
+            <button class="role-btn" data-role="staff" onclick="switchRole('staff')">Staff</button>
+            <button class="role-btn" data-role="admin" onclick="switchRole('admin')">Admin</button>
+          </div>
+          <span class="pill emerald"><span class="dot emerald"></span> Sylvie 3D Online</span>
+          <button class="btn btn-primary btn-sm" onclick="navigate('create-ticket')">＋ New Ticket</button>
+        </div>
+      </header>
+
+      <main class="workspace-content">
+
+        <!-- ========== SCREEN 5: 3D CUSTOMER DASHBOARD ========== -->
+        <section id="view-dashboard-customer" class="grid gap-4">
+          <div class="card" style="background:linear-gradient(120deg, rgba(34,211,238,0.12), rgba(168,85,247,0.1));">
+            <div class="flex justify-between items-center" style="flex-wrap:wrap;gap:14px;">
+              <div>
+                <span class="pill">Live Autonomous Mode</span>
+                <h2 style="font-size:24px;font-weight:800;margin:8px 0 4px;">Welcome back, Alex Chen</h2>
+                <p class="muted" style="font-size:13px;">Your autonomous 3D spatial support hub is operating at peak efficiency. Sylvie AI has pre-resolved 4 pending inquiries.</p>
+              </div>
+              <div class="flex gap-2">
+                <button class="btn" onclick="navigate('chatbot')">✦ Neural Routing</button>
+                <button class="btn btn-primary" onclick="navigate('create-ticket')">＋ Create New Ticket</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="kpi-grid-4">
+            <div class="kpi-card"><div class="dim mono" style="font-size:11px;">TOTAL TICKETS</div><div class="kpi-val">128</div><div class="muted" style="font-size:12px;">+14% this cycle</div></div>
+            <div class="kpi-card"><div class="dim mono" style="font-size:11px;">OPEN INQUIRIES</div><div class="kpi-val" style="color:var(--cyan);">03</div><div class="muted" style="font-size:12px;">SLA Active</div></div>
+            <div class="kpi-card"><div class="dim mono" style="font-size:11px;">IN PROGRESS</div><div class="kpi-val" style="color:var(--purple);">05</div><div class="muted" style="font-size:12px;">2 Copilot Assisted</div></div>
+            <div class="kpi-card"><div class="dim mono" style="font-size:11px;">RESOLVED</div><div class="kpi-val" style="color:var(--emerald);">120</div><div class="muted" style="font-size:12px;">99.2% CSAT</div></div>
+          </div>
+
+          <div class="cols-2-1">
+            <div class="grid gap-4">
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title">Neural Resolution Funnel</div>
+                  <span class="mono dim" style="font-size:11px;">LIVE STAGE TELEMETRY</span>
+                </div>
+                <div class="steps-row">
+                  <div class="step-box done"><span class="mono dim" style="font-size:10px;">1. SUBMITTED</span><strong>128 Total</strong><span class="dim" style="font-size:11px;">Ingested</span></div>
+                  <div class="step-box done"><span class="mono dim" style="font-size:10px;">2. NEURAL TRIAGE</span><strong>124 Auto-Routed</strong><span class="dim" style="font-size:11px;">1.2s avg</span></div>
+                  <div class="step-box current"><span class="mono" style="font-size:10px;color:var(--cyan);">3. COPILOT &amp; TIER-2</span><strong>08 Active</strong><span class="dim" style="font-size:11px;">In remediation</span></div>
+                  <div class="step-box"><span class="mono dim" style="font-size:10px;">4. VERIFIED</span><strong>120 Closed</strong><span class="dim" style="font-size:11px;">Zero-trust signed</span></div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title">Active Inquiries &amp; Operations</div>
+                  <div class="flex gap-2">
+                    <button class="btn btn-sm" onclick="filterTickets('all')">All</button>
+                    <button class="btn btn-sm" onclick="filterTickets('High')">Needs Action</button>
+                    <button class="btn btn-sm" onclick="filterTickets('Resolved')">Sylvie Resolved</button>
+                  </div>
+                </div>
+                <table class="data-table">
+                  <thead>
+                    <tr><th>Ticket ID</th><th>Issue Summary</th><th>Priority</th><th>Operator</th><th>Status</th></tr>
+                  </thead>
+                  <tbody id="customer-ticket-rows"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="grid gap-4">
+              <div class="holo-card">
+                <div class="flex justify-between items-center" style="margin-bottom:8px;">
+                  <span class="pill">3D Node Active</span>
+                  <span class="mono" style="font-size:11px;color:var(--emerald);">99.9% Sync</span>
+                </div>
+                <svg viewBox="0 0 180 100" width="150" height="84">
+                  <circle cx="90" cy="48" r="28" fill="rgba(34,211,238,0.12)" stroke="#22d3ee" stroke-width="2" />
+                  <circle cx="90" cy="48" r="16" fill="rgba(168,85,247,0.2)" stroke="#a855f7" stroke-width="1.5" />
+                  <circle cx="84" cy="46" r="2.5" fill="#22d3ee" />
+                  <circle cx="96" cy="46" r="2.5" fill="#22d3ee" />
+                </svg>
+                <div style="font-weight:700;font-size:16px;">Sylvie AI Copilot</div>
+                <p class="muted" style="font-size:12px;margin:4px 0 12px;">Monitoring your Kubernetes clusters and API rate limits.</p>
+                <button class="btn btn-primary" style="width:100%;" onclick="navigate('chatbot')">Talk to Sylvie (Voice / 3D)</button>
+              </div>
+
+              <div class="card">
+                <div class="card-header"><div class="card-title">Neural Audit Stream</div><span class="pill emerald">Streaming</span></div>
+                <div class="grid gap-2 mono" style="font-size:11px;">
+                  <div style="padding:8px;border-radius:8px;background:rgba(15,23,42,0.8);border-left:2px solid var(--cyan);">Sylvie auto-resolved API rate limit #TKT-8924 • 2m ago</div>
+                  <div style="padding:8px;border-radius:8px;background:rgba(15,23,42,0.8);border-left:2px solid var(--purple);">Passkey rotation validated for Alex Chen • 18m ago</div>
+                  <div style="padding:8px;border-radius:8px;background:rgba(15,23,42,0.8);border-left:2px solid var(--emerald);">Knowledge base synced 14 vector embeddings • 1h ago</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========== SCREEN 3: 3D SUPPORT STAFF DASHBOARD ========== -->
+        <section id="view-dashboard-staff" class="grid gap-4 hidden">
+          <div class="card" style="background:linear-gradient(120deg, rgba(168,85,247,0.14), rgba(34,211,238,0.1));">
+            <div class="flex justify-between items-center" style="flex-wrap:wrap;gap:14px;">
+              <div>
+                <span class="pill purple">Operative Desk • Tier-3 SRE</span>
+                <h2 style="font-size:24px;font-weight:800;margin:8px 0 4px;">Welcome back, Elena Rostova</h2>
+                <p class="muted" style="font-size:13px;">Live sentiment HUD active. 6 escalations awaiting operative review with pre-drafted Sylvie remediations.</p>
+              </div>
+              <div class="flex gap-2">
+                <button class="btn" onclick="navigate('tracking')">Inspect Active Thread</button>
+                <button class="btn btn-purple" onclick="notify('All queued low-risk drafts approved!')">Batch Approve Safe Drafts</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="kpi-grid-4">
+            <div class="kpi-card"><div class="dim mono" style="font-size:11px;">ASSIGNED TICKETS</div><div class="kpi-val">18</div><div class="muted" style="font-size:12px;">Active load: 72%</div></div>
+            <div class="kpi-card"><div class="dim mono" style="font-size:11px;">PENDING TICKETS</div><div class="kpi-val" style="color:var(--amber);">06</div><div class="muted" style="font-size:12px;">Avg wait 2.1m</div></div>
+            <div class="kpi-card"><div class="dim mono" style="font-size:11px;">IN PROGRESS</div><div class="kpi-val" style="color:var(--cyan);">08</div><div class="muted" style="font-size:12px;">3 SLA priority</div></div>
+            <div class="kpi-card"><div class="dim mono" style="font-size:11px;">RESOLVED TODAY</div><div class="kpi-val" style="color:var(--emerald);">42</div><div class="muted" style="font-size:12px;">98.8% CSAT</div></div>
+          </div>
+
+          <div class="cols-1-1">
+            <div class="card">
+              <div class="card-header"><div class="card-title">Customer Complaints &amp; Live Queue</div><span class="pill">4 Active</span></div>
+              <div class="grid gap-3" id="staff-queue-list"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title" id="staff-selected-name">Alex Chen — #TKT-8921</div>
+                  <div class="dim" style="font-size:12px;" id="staff-selected-meta">Sentiment: Tense • Enterprise Tier-1 • OOMKilled exit 137</div>
+                </div>
+                <span class="pill rose">Urgent</span>
+              </div>
+              <div class="msg" style="margin-bottom:14px;">
+                <div class="dim mono" style="font-size:11px;margin-bottom:4px;">CUSTOMER PAYLOAD</div>
+                <div id="staff-selected-body">Cluster pod failure in us-east-1 under high memory spike. Worker nodes hitting 5GiB container limit during automated indexing.</div>
+              </div>
+              <div class="msg ai" style="margin-bottom:14px;">
+                <div class="flex justify-between items-center" style="margin-bottom:6px;">
+                  <span class="pill">Sylvie Suggested Neural Reply</span>
+                  <span class="mono" style="font-size:11px;color:var(--emerald);">96.4% Confidence</span>
+                </div>
+                <textarea class="textarea" rows="4" id="staff-reply-draft">Hi Alex — I've inspected worker-alpha-09 telemetry. The OOMKilled (exit 137) is caused by an unbounded buffer in telemetry-indexer-v2. I recommend bumping the memory limit to 8GiB and enabling stream chunking. Shall I apply the hotfix rollout now?</textarea>
+              </div>
+              <div class="flex gap-2">
+                <button class="btn btn-primary" onclick="notify('Neural reply dispatched to Alex Chen & ticket updated!')">Approve &amp; Send Reply</button>
+                <button class="btn" onclick="navigate('tracking')">Open Full 3D Thread →</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========== SCREEN 6: 3D ADMIN DASHBOARD ========== -->
+        <section id="view-dashboard-admin" class="grid gap-4 hidden">
+          <div class="card" style="background:linear-gradient(120deg, rgba(245,158,11,0.12), rgba(34,211,238,0.08));">
+            <div class="flex justify-between items-center">
+              <div>
+                <span class="pill amber">Root Command • Cluster Orchestration</span>
+                <h2 style="font-size:24px;font-weight:800;margin:8px 0 4px;">Admin Nexus | Autonomous Ops Control</h2>
+                <p class="muted" style="font-size:13px;">Global LLM guardrails, autonomous offload telemetry, and enterprise client ARR health.</p>
+              </div>
+              <button class="btn btn-primary" onclick="notify('Zero-trust audit bundle exported.')">Export Audit Telemetry</button>
+            </div>
+          </div>
+
+          <div class="kpi-grid-5">
+            <div class="kpi-card"><div class="dim mono" style="font-size:10px;">TOTAL TICKETS</div><div class="kpi-val" style="font-size:24px;">14,820</div></div>
+            <div class="kpi-card"><div class="dim mono" style="font-size:10px;">ACTIVE NODES</div><div class="kpi-val" style="font-size:24px;color:var(--emerald);">64</div></div>
+            <div class="kpi-card"><div class="dim mono" style="font-size:10px;">AI AUTO-RESOLVED</div><div class="kpi-val" style="font-size:24px;color:var(--cyan);">84,210</div></div>
+            <div class="kpi-card"><div class="dim mono" style="font-size:10px;">ACTIVE STAFF</div><div class="kpi-val" style="font-size:24px;color:var(--purple);">42</div></div>
+            <div class="kpi-card"><div class="dim mono" style="font-size:10px;">ESCALATIONS</div><div class="kpi-val" style="font-size:24px;color:var(--amber);">3,370</div></div>
+          </div>
+
+          <div class="cols-2-1">
+            <div class="card">
+              <div class="card-header"><div class="card-title">Neural Ticket Volume &amp; Autonomous Offload</div><span class="pill emerald">84.2% Offloaded</span></div>
+              <svg viewBox="0 0 600 180" width="100%" height="180">
+                <defs>
+                  <linearGradient id="areaC" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.45" />
+                    <stop offset="100%" stop-color="#22d3ee" stop-opacity="0" />
+                  </linearGradient>
+                </defs>
+                <path d="M0,150 C90,130 140,95 220,105 C300,115 360,45 450,55 C520,62 560,30 600,22 L600,180 L0,180 Z" fill="url(#areaC)" />
+                <path d="M0,150 C90,130 140,95 220,105 C300,115 360,45 450,55 C520,62 560,30 600,22" fill="none" stroke="#22d3ee" stroke-width="3" />
+                <path d="M0,165 C100,155 180,145 270,132 C370,118 470,98 600,82" fill="none" stroke="#a855f7" stroke-width="2" stroke-dasharray="5,5" />
+              </svg>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><div class="card-title">Staff Matrix &amp; SLA</div><span class="pill">Optimal</span></div>
+              <div class="grid gap-3">
+                <div class="flex justify-between"><span>Global CSAT</span><strong class="mono" style="color:var(--emerald);">98.8%</strong></div>
+                <div class="flex justify-between"><span>Avg First Response</span><strong class="mono" style="color:var(--cyan);">3.6m</strong></div>
+                <div class="flex justify-between"><span>Reopen Rate</span><strong class="mono" style="color:var(--purple);">2.1%</strong></div>
+                <div style="border-top:1px solid var(--border);padding-top:10px;">
+                  <div class="dim mono" style="font-size:10px;margin-bottom:6px;">STAFF LOAD</div>
+                  <div class="grid gap-2" style="font-size:12px;">
+                    <div class="flex justify-between"><span>Elena Rostova (Tier-3)</span><span class="mono">74%</span></div>
+                    <div class="flex justify-between"><span>Marcus Vance (SRE)</span><span class="mono">68%</span></div>
+                    <div class="flex justify-between"><span>Liam K. (Auth Ops)</span><span class="mono">52%</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cols-1-1">
+            <div class="card">
+              <div class="card-header"><div class="card-title">Enterprise Client Health &amp; ARR</div></div>
+              <table class="data-table">
+                <thead><tr><th>Enterprise</th><th>ARR</th><th>Health</th><th>SLA</th></tr></thead>
+                <tbody>
+                  <tr><td>QuantumReach Labs</td><td class="mono">$420k</td><td><span class="pill emerald">99.4%</span></td><td class="mono">15m</td></tr>
+                  <tr><td>AetherCloud Corp</td><td class="mono">$310k</td><td><span class="pill amber">91.2%</span></td><td class="mono">30m</td></tr>
+                  <tr><td>NovaFin Systems</td><td class="mono">$580k</td><td><span class="pill emerald">99.9%</span></td><td class="mono">10m</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">System Neural Audit &amp; Guardrails</div></div>
+              <div class="grid gap-2 mono" style="font-size:11px;">
+                <div style="padding:8px;border-radius:8px;background:rgba(15,23,42,0.8);">[GUARDRAIL] Hallucination score: 0.02% across 14k completions</div>
+                <div style="padding:8px;border-radius:8px;background:rgba(15,23,42,0.8);">[PII-SHIELD] 192 API keys automatically redacted in logs</div>
+                <div style="padding:8px;border-radius:8px;background:rgba(15,23,42,0.8);">[CLUSTER] us-east-1 autoscaler armed for worker-alpha pool</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========== SCREEN 4: CREATE SUPPORT TICKET ========== -->
+        <section id="view-create-ticket" class="grid gap-4 hidden">
+          <div class="flex justify-between items-center">
+            <div>
+              <span class="pill">Neural Triage Protocol v4</span>
+              <h2 style="font-size:24px;font-weight:800;margin-top:6px;">Submit a Neural Support Request</h2>
+            </div>
+          </div>
+
+          <div class="cols-2-1">
+            <form class="card grid gap-3" onsubmit="event.preventDefault(); submitNewTicket();">
+              <div class="card-header"><div class="card-title">Ticket Diagnostics &amp; Parameters</div><span class="mono dim" style="font-size:11px;">AUTO-EMBEDDING</span></div>
+              <div>
+                <div class="field-label"><span>Incident Summary / Subject</span><span>Presets available</span></div>
+                <input id="new-ticket-subject" class="input" value="Cluster pod failure in us-east-1 under high memory spike" required />
+                <div class="flex gap-2" style="margin-top:8px;flex-wrap:wrap;">
+                  <button type="button" class="btn btn-sm" onclick="document.getElementById('new-ticket-subject').value='K8s worker pod OOMKilled exit 137'">K8s OOMKilled</button>
+                  <button type="button" class="btn btn-sm" onclick="document.getElementById('new-ticket-subject').value='FIDO2 passkey hardware token rejected'">Passkey Desync</button>
+                  <button type="button" class="btn btn-sm" onclick="document.getElementById('new-ticket-subject').value='Billing seat allocation expansion (Tier-4)'">Billing Expansion</button>
+                </div>
+              </div>
+
+              <div class="cols-1-1">
+                <div>
+                  <div class="field-label"><span>Incident Category</span></div>
+                  <select id="new-ticket-cat" class="select">
+                    <option>Infrastructure &amp; Cloud (K8s/Edge)</option>
+                    <option>Identity &amp; Zero-Trust Auth</option>
+                    <option>API &amp; Webhook Telemetry</option>
+                    <option>Billing &amp; Seat Licensing</option>
+                  </select>
+                </div>
+                <div>
+                  <div class="field-label"><span>Target Environment</span></div>
+                  <select class="select">
+                    <option>Production Cluster (AWS us-east-1)</option>
+                    <option>Staging Mesh (eu-central-1)</option>
+                    <option>Sandbox Node</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <div class="field-label"><span>Severity &amp; Target SLA Level</span><span>Pre-calibrated by Sylvie</span></div>
+                <div class="grid" style="grid-template-columns:repeat(4,1fr);gap:8px;" id="severity-pills">
+                  <button type="button" class="btn btn-sm" onclick="setSeverity('Low', this)">Low</button>
+                  <button type="button" class="btn btn-sm" onclick="setSeverity('Medium', this)">Medium</button>
+                  <button type="button" class="btn btn-sm" style="border-color:var(--cyan);color:var(--cyan);" onclick="setSeverity('High', this)">High (15m)</button>
+                  <button type="button" class="btn btn-sm" onclick="setSeverity('Urgent', this)">Urgent (5m)</button>
+                </div>
+              </div>
+
+              <div>
+                <div class="field-label"><span>Incident Diagnostics &amp; Logs</span><span>Syntax Aware</span></div>
+                <textarea id="new-ticket-logs" class="textarea mono" rows="5">Node crash observed on k8s-worker-east-09 with exit code 137 (OOMKilled). Container memory exceeded 5GiB allocation limit during peak automated indexing at 14:22:04 UTC.</textarea>
+              </div>
+
+              <div class="flex justify-between items-center">
+                <div class="flex gap-2">
+                  <span class="pill">crash-log-2026.log</span>
+                  <span class="pill purple">k8s-metrics.png</span>
+                </div>
+                <div class="flex gap-2">
+                  <button type="button" class="btn" onclick="navigate('dashboard')">Discard Draft</button>
+                  <button type="submit" class="btn btn-primary">Submit Ticket to Neural Mesh →</button>
+                </div>
+              </div>
+            </form>
+
+            <div class="grid gap-4">
+              <div class="holo-card">
+                <div class="pill" style="margin-bottom:8px;">Sylvie 3D Copilot Pre-Triage</div>
+                <p class="muted" style="font-size:12px;">I've already parsed your K8s exit code 137 snippet. You might not need to wait for a human engineer—the auto-repair runbook is ready.</p>
+              </div>
+              <div class="card">
+                <div class="card-header"><div class="card-title">Live Neural Diagnostic</div><span class="pill rose">Risk: 89</span></div>
+                <div class="cols-1-1" style="margin-bottom:12px;">
+                  <div class="kpi-card"><div class="dim mono" style="font-size:10px;">RISK INDEX</div><div class="kpi-val" style="color:var(--amber);">89</div></div>
+                  <div class="kpi-card"><div class="dim mono" style="font-size:10px;">TRIAGE ETA</div><div class="kpi-val" style="color:var(--cyan);">22s</div></div>
+                </div>
+                <div class="dim mono" style="font-size:10px;margin-bottom:6px;">MATCHED NEURAL KNOWLEDGE</div>
+                <div class="grid gap-2" style="font-size:12px;">
+                  <div class="card" style="padding:10px;">↗ Resolving OOMKilled container crashes</div>
+                  <div class="card" style="padding:10px;">↗ Tuning dynamic container memory caps</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========== SCREEN 1: 3D TICKET TRACKING & NEURAL THREAD ========== -->
+        <section id="view-tracking" class="grid gap-4 hidden">
+          <div class="card">
+            <div class="flex justify-between items-center" style="flex-wrap:wrap;gap:10px;">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="pill rose">High Priority</span>
+                  <span class="mono" style="color:var(--cyan);" id="tracking-id">#TKT-8921</span>
+                </div>
+                <h2 style="font-size:20px;font-weight:800;margin-top:6px;" id="tracking-title">Cluster pod failure in us-east-1 under high memory spike (OOMKilled exit 137)</h2>
+              </div>
+              <button class="btn btn-sm" onclick="notify('Pod memory dump downloaded.')">⬇ Download Bundle</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><div class="card-title">Lifecycle Milestone Progression</div><span class="mono" style="font-size:11px;color:var(--emerald);">98% AI Confidence</span></div>
+            <div class="steps-row-5">
+              <div class="step-box done"><span class="mono dim" style="font-size:10px;">1. OPEN</span><strong>Ingested</strong></div>
+              <div class="step-box done"><span class="mono dim" style="font-size:10px;">2. ASSIGNED</span><strong>Marcus Vance</strong></div>
+              <div class="step-box current"><span class="mono" style="font-size:10px;color:var(--cyan);">3. IN PROGRESS</span><strong>SRE + Sylvie</strong></div>
+              <div class="step-box"><span class="mono dim" style="font-size:10px;">4. RESOLVED</span><strong>Pending</strong></div>
+              <div class="step-box"><span class="mono dim" style="font-size:10px;">5. CLOSED</span><strong>Verify</strong></div>
+            </div>
+          </div>
+
+          <div class="cols-2-1">
+            <div class="card" style="display:flex;flex-direction:column;justify-content:space-between;">
+              <div>
+                <div class="card-header"><div class="card-title">Incident Dialogue &amp; Execution Stream</div><span class="pill">Live Thread</span></div>
+                <div class="chat-box" id="tracking-thread">
+                  <div class="msg user">
+                    <div class="flex justify-between" style="font-size:11px;margin-bottom:4px;"><strong>Alex Chen</strong><span class="dim mono">14:22 UTC</span></div>
+                    We experienced sudden pod evictions on worker-alpha-09. Telemetry shows container memory hitting the 5GiB ceiling before OOMKilled.
+                  </div>
+                  <div class="msg ai">
+                    <div class="flex justify-between" style="font-size:11px;margin-bottom:4px;"><strong style="color:var(--cyan);">✦ Sylvie AI Copilot</strong><span class="dim mono">14:22 UTC • 1.2s</span></div>
+                    Root cause identified in <span class="mono">telemetry-indexer-v2</span>: unbounded memory leak during UTF-8 JSON payload unmarshaling. Suggested fix: apply heap cap patch &amp; scale horizontal autoscaler.
+                  </div>
+                  <div class="msg">
+                    <div class="flex justify-between" style="font-size:11px;margin-bottom:4px;"><strong style="color:#c084fc;">Marcus Vance (Staff SRE)</strong><span class="dim mono">14:25 UTC</span></div>
+                    Confirmed. Staging the patched container image now and attaching live telemetry probes.
+                  </div>
+                </div>
+              </div>
+              <form class="flex gap-2" style="margin-top:14px;" onsubmit="event.preventDefault(); appendTrackingMessage();">
+                <input id="tracking-input" class="input" placeholder="Type a response, inject diagnostic logs, or @sylvie..." />
+                <button type="submit" class="btn btn-primary">Send Dispatch →</button>
+              </form>
+            </div>
+
+            <div class="grid gap-4">
+              <div class="card">
+                <div class="card-header"><div class="card-title">Fast-Path SRE Triggers</div></div>
+                <div class="grid gap-2">
+                  <button class="btn" style="justify-content:flex-start;" onclick="notify('Node memory buffer cleared on worker-alpha-09!')">⚡ Clear Node Memory Buffer</button>
+                  <button class="btn" style="justify-content:flex-start;" onclick="notify('Pod heap dump archived to S3 vault.')">⬇ Download Pod Memory Dump</button>
+                  <button class="btn" style="justify-content:flex-start;" onclick="notify('Horizontal Pod Autoscaler scaled to 6 replicas.')">⇪ Scale Horizontal Autoscaler</button>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header"><div class="card-title">Neural Resolution Metrics</div></div>
+                <div class="cols-1-1">
+                  <div class="kpi-card"><div class="dim mono" style="font-size:10px;">AI TRIAGE</div><div class="kpi-val" style="color:var(--cyan);">1.2s</div></div>
+                  <div class="kpi-card"><div class="dim mono" style="font-size:10px;">EST. RESOLVE</div><div class="kpi-val" style="color:var(--emerald);">14m</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========== SCREEN 7: 3D SYLVIE AI ASSISTANT CHATBOT ========== -->
+        <section id="view-chatbot" class="grid gap-4 hidden">
+          <div class="card">
+            <div class="flex justify-between items-center" style="flex-wrap:wrap;gap:10px;">
+              <div class="flex items-center gap-2">
+                <span class="pill"><span class="dot"></span> Sylvie AI Assistant • Neural Stream v4.0-Omni</span>
+              </div>
+              <div class="flex gap-2">
+                <button class="btn btn-sm" onclick="notify('Spatial Audio Mode toggled.')">🔊 Spatial Audio</button>
+                <button class="btn btn-sm" onclick="clearChat()">Clear Thread</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="cols-1-2">
+            <div class="grid gap-4">
+              <div class="holo-card">
+                <svg viewBox="0 0 180 110" width="160" height="96">
+                  <circle cx="90" cy="52" r="32" fill="rgba(34,211,238,0.12)" stroke="#22d3ee" stroke-width="2" />
+                  <circle cx="90" cy="52" r="20" fill="rgba(168,85,247,0.22)" stroke="#a855f7" stroke-width="1.5" />
+                  <circle cx="83" cy="50" r="3" fill="#22d3ee" />
+                  <circle cx="97" cy="50" r="3" fill="#22d3ee" />
+                </svg>
+                <div style="font-weight:800;font-size:16px;">Sylvie AI</div>
+                <div class="mono dim" style="font-size:11px;margin:4px 0 10px;">Empathy Calibration: 98% Warm &amp; Precise</div>
+                <div class="dim mono" style="font-size:10px;">NEURAL VISUALIZER</div>
+                <div style="height:18px;display:flex;align-items:center;justify-content:center;gap:4px;margin-top:6px;">
+                  <span style="width:4px;height:10px;background:var(--cyan);border-radius:2px;"></span>
+                  <span style="width:4px;height:16px;background:var(--purple);border-radius:2px;"></span>
+                  <span style="width:4px;height:12px;background:var(--cyan);border-radius:2px;"></span>
+                  <span style="width:4px;height:18px;background:var(--cyan);border-radius:2px;"></span>
+                  <span style="width:4px;height:9px;background:var(--purple);border-radius:2px;"></span>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header"><div class="card-title">Suggested Neural Queries</div></div>
+                <div class="grid gap-2">
+                  <button class="btn btn-sm" style="justify-content:flex-start;text-align:left;" onclick="askSylvie('Why did k8s pod worker-alpha-09 exit with 137 OOMKilled?')">Why did worker-alpha-09 exit 137?</button>
+                  <button class="btn btn-sm" style="justify-content:flex-start;text-align:left;" onclick="askSylvie('Generate an automated rollback PR for ingress-nginx v1.9')">Generate rollback PR for ingress-nginx</button>
+                  <button class="btn btn-sm" style="justify-content:flex-start;text-align:left;" onclick="askSylvie('Summarize today\'s urgent enterprise SLA escalations')">Summarize enterprise SLA escalations</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="display:flex;flex-direction:column;justify-content:space-between;min-height:480px;">
+              <div>
+                <div class="card-header">
+                  <div class="card-title">Active Thread: Pod Triage &amp; Remediation</div>
+                  <div class="flex gap-2">
+                    <button class="btn btn-sm" onclick="askSylvie('Analyze Active Incidents')">Analyze Incidents</button>
+                    <button class="btn btn-sm" onclick="askSylvie('Run Sandbox Simulation')">Sandbox Sim</button>
+                  </div>
+                </div>
+                <div class="chat-box" id="sylvie-chat-box">
+                  <div class="msg ai">
+                    <div class="mono" style="font-size:11px;color:var(--cyan);margin-bottom:4px;">✦ SYLVIE AI • 14:20 UTC</div>
+                    Hello! I'm Sylvie, your autonomous 3D support companion. I've automatically ingested your cluster telemetry, active tickets, and cloud logs. How can I assist you today?
+                  </div>
+                  <div class="msg user">
+                    <div class="mono" style="font-size:11px;color:#c084fc;margin-bottom:4px;">ALEX CHEN • 14:21 UTC</div>
+                    Hey Sylvie! We're observing recurring memory spikes on cluster <span class="mono">worker-alpha-09</span> causing 504 gateway timeouts. Can you inspect the memory dump and recommend a hotfix?
+                  </div>
+                  <div class="msg ai">
+                    <div class="mono" style="font-size:11px;color:var(--cyan);margin-bottom:4px;">✦ SYLVIE AI • 99.4% CONFIDENCE</div>
+                    I've dissected the 4.2MB heap profile. The root cause is an unbounded memory leak in <span class="mono">telemetry-indexer-v2</span> while unmarshaling nested UTF-8 JSON payloads.
+                    <div class="mono" style="margin-top:8px;padding:8px;border-radius:8px;background:#060913;border:1px solid var(--border);font-size:11px;color:var(--amber);">
+                      worker-alpha-09 • Heap OOM Eviction: 7.42 GiB / 8.00 GiB
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <form class="flex gap-2" style="margin-top:14px;" onsubmit="event.preventDefault(); sendSylvieChat();">
+                <input id="sylvie-input" class="input" placeholder="Ask Sylvie anything, paste error logs, or type '/' for commands..." />
+                <button type="submit" class="btn btn-primary">Send ✦</button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========== SCREEN 2: 3D PROFILE & SETTINGS ========== -->
+        <section id="view-settings" class="grid gap-4 hidden">
+          <div class="card">
+            <div class="flex justify-between items-center" style="flex-wrap:wrap;gap:14px;">
+              <div class="flex items-center gap-3">
+                <div class="brand-icon" style="width:52px;height:52px;border-radius:50%;font-size:18px;">ER</div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h2 style="font-size:20px;font-weight:800;">Elena Rostova</h2>
+                    <span class="pill emerald">Quantum Verified</span>
+                  </div>
+                  <div class="muted" style="font-size:12px;">Tier-3 Ops Lead &amp; SRE Architect • Zero-Trust Hardware Key Enforced</div>
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <button class="btn" onclick="notify('Entropy keys rotated successfully.')">Rotate Keys</button>
+                <button class="btn btn-primary" onclick="notify('Profile & spatial HUD settings saved.')">Save Changes</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="cols-1-1">
+            <div class="card grid gap-3">
+              <div class="card-header"><div class="card-title">Neural Operator Profile</div></div>
+              <div class="cols-1-1">
+                <div><div class="field-label"><span>Full Operator Name</span></div><input class="input" value="Elena Rostova" /></div>
+                <div><div class="field-label"><span>Role / Designation</span></div><input class="input" value="Tier-3 Ops Lead & SRE Architect" /></div>
+              </div>
+              <div class="cols-1-1">
+                <div><div class="field-label"><span>Operator Email</span></div><input class="input" value="elena.rostova@smartsupport.ai" /></div>
+                <div><div class="field-label"><span>Operational Timezone</span></div><input class="input" value="UTC-08:00 (US-West)" /></div>
+              </div>
+              <div>
+                <div class="field-label"><span>Operator Bio / Neural Context</span></div>
+                <textarea class="textarea" rows="3">Lead architect for high-availability Kubernetes clusters and autonomous Sylvie LLM triage workflows across distributed edge regions.</textarea>
+              </div>
+            </div>
+
+            <div class="card grid gap-3">
+              <div class="card-header"><div class="card-title">Security &amp; Entropy Keys</div><span class="pill">AES-256-GCM</span></div>
+              <div>
+                <div class="field-label"><span>Active Neural API Key</span></div>
+                <div class="flex gap-2">
+                  <input id="api-key-field" class="input mono" type="password" value="ssai_live_98f2a4c1d9e044b71a22" readonly />
+                  <button class="btn btn-sm" onclick="const f=document.getElementById('api-key-field'); f.type = f.type==='password'?'text':'password';">Reveal</button>
+                  <button class="btn btn-sm" onclick="notify('API key copied to clipboard.')">Copy</button>
+                </div>
+              </div>
+              <div class="card" style="padding:12px;">
+                <div class="flex justify-between items-center">
+                  <div><strong>FIDO2 Passkey #1</strong><div class="dim" style="font-size:11px;">MacBook Pro TouchID • Last used 4m ago</div></div>
+                  <span class="pill emerald">Active</span>
+                </div>
+              </div>
+              <div class="card" style="padding:12px;">
+                <div class="flex justify-between items-center">
+                  <div><strong>YubiKey 5C Quantum Node</strong><div class="dim" style="font-size:11px;">Hardware backup • Enforced</div></div>
+                  <span class="pill emerald">Bound</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cols-1-1">
+            <div class="card grid gap-3">
+              <div class="card-header"><div class="card-title">Sylvie AI &amp; Spatial HUD Matrix</div></div>
+              <div class="flex justify-between items-center">
+                <div><strong>Spatial Voice &amp; Hologram HUD</strong><div class="dim" style="font-size:12px;">Enable real-time 3D avatar cues during triage</div></div>
+                <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="flex justify-between items-center">
+                <div><strong>Auto-Draft Neural Replies</strong><div class="dim" style="font-size:12px;">Pre-compose responses for Tier-2 &amp; Tier-3 tickets</div></div>
+                <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+              </div>
+            </div>
+
+            <div class="card grid gap-3">
+              <div class="card-header"><div class="card-title">Event Beacons &amp; Zero-Trust PII Shield</div></div>
+              <div class="flex justify-between items-center">
+                <div><strong>OOMKilled &amp; SLA Breach Alerts</strong><div class="dim" style="font-size:12px;">Instant telemetry ping on high-severity spikes</div></div>
+                <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="flex justify-between items-center">
+                <div><strong>Auto-Redact PII &amp; Tokens</strong><div class="dim" style="font-size:12px;">Scrub secrets before LLM prompt embedding</div></div>
+                <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"><span class="dot"></span><span id="toast-msg"></span></div>
+
+  <script>
+    let currentTier = 'customer';
+    let currentView = 'dashboard';
+    let selectedSeverity = 'High';
+
+    const tickets = [
+      { id: '#TKT-8921', title: 'Cluster pod failure in us-east-1 under high memory spike', priority: 'High', operator: 'Marcus Vance', status: 'In Progress' },
+      { id: '#TKT-8914', title: 'FIDO2 passkey hardware token rejected on SSO edge', priority: 'Medium', operator: 'Sylvie AI', status: 'Open' },
+      { id: '#TKT-8906', title: 'Webhook payload signing secret desync in eu-west', priority: 'High', operator: 'Elena Rostova', status: 'In Progress' },
+      { id: '#TKT-8899', title: 'Billing seat allocation expansion (Tier-4 Enterprise)', priority: 'Low', operator: 'Sylvie AI', status: 'Resolved' }
+    ];
+
+    const staffQueue = [
+      { name: 'Alex Chen', ticket: '#TKT-8921', summary: 'OOMKilled exit 137 on worker-alpha-09', sentiment: 'Urgent', body: 'Cluster pod failure in us-east-1 under high memory spike. Worker nodes hitting 5GiB container limit during automated indexing.', draft: 'Hi Alex — I\'ve inspected worker-alpha-09 telemetry. The OOMKilled (exit 137) is caused by an unbounded buffer in telemetry-indexer-v2. I recommend bumping the memory limit to 8GiB. Shall I apply the hotfix?' },
+      { name: 'Sophia Chen-Reyes', ticket: '#TKT-8918', summary: 'API Gateway 502 spike after TLS rotation', sentiment: 'High', body: 'Seeing intermittent 502 Bad Gateway responses on /v4/neural/stream after certificate rollover.', draft: 'Hi Sophia — The edge proxy cache held an expired intermediate cert. I\'ve purged the edge PoP cache; latency is returning to 14ms.' },
+      { name: 'David Thorne', ticket: '#TKT-8912', summary: 'SAML Okta group claim mapping mismatch', sentiment: 'Medium', body: 'Users in group SRE-Leads are landing in Customer Tier 1 instead of Staff Copilot.', draft: 'Hi David — Updated your SAML attribute mapping for role=sre_lead to route directly to Tier-2 Staff Copilot.' },
+      { name: 'Mia Lin', ticket: '#TKT-8904', summary: 'Webhook retry backoff tuning request', sentiment: 'Low', body: 'Need exponential backoff adjusted to 60s max for billing events.', draft: 'Hi Mia — I\'ve updated your webhook retry policy to exponential 2s–60s across all production endpoints.' }
+    ];
+
+    function goAuth(mode) {
+      document.getElementById('screen-login').classList.toggle('hidden', mode !== 'login');
+      document.getElementById('screen-signup').classList.toggle('hidden', mode !== 'signup');
+      document.getElementById('app-shell').classList.add('hidden');
+    }
+
+    function selectTier(tier) {
+      currentTier = tier;
+      document.querySelectorAll('.tier-card').forEach(c => c.classList.toggle('active', c.dataset.tier === tier));
+      const labels = { customer: 'Customer', staff: 'Staff Copilot', admin: 'Admin Command' };
+      document.getElementById('selected-tier-badge').textContent = labels[tier];
+      const emails = {
+        customer: 'alex.chen@quantumreach.io',
+        staff: 'elena.rostova@smartsupport.ai',
+        admin: 'root.ops@smartsupport.ai'
+      };
+      document.getElementById('login-email').value = emails[tier];
+    }
+
+    function enterWorkspace() {
+      document.getElementById('screen-login').classList.add('hidden');
+      document.getElementById('screen-signup').classList.add('hidden');
+      document.getElementById('app-shell').classList.remove('hidden');
+      switchRole(currentTier);
+      navigate('dashboard');
+      notify('Biometric quantum link established.');
+    }
+
+    function logout() {
+      document.getElementById('app-shell').classList.add('hidden');
+      goAuth('login');
+      notify('Session locked & signed out.');
+    }
+
+    function switchRole(role) {
+      currentTier = role;
+      document.querySelectorAll('.role-btn').forEach(b => b.classList.toggle('active', b.dataset.role === role));
+      const users = {
+        customer: { name: 'Alex Chen', label: 'Customer • Tier 1', init: 'AC' },
+        staff: { name: 'Elena Rostova', label: 'Staff • Tier-3 SRE', init: 'ER' },
+        admin: { name: 'Root Command', label: 'Admin • Nexus', init: 'RC' }
+      };
+      document.getElementById('sidebar-user').textContent = users[role].name;
+      document.getElementById('sidebar-role-label').textContent = users[role].label;
+      document.getElementById('sidebar-avatar').textContent = users[role].init;
+
+      if (currentView === 'dashboard') renderDashboardRole();
+    }
+
+    function renderDashboardRole() {
+      ['customer', 'staff', 'admin'].forEach(r => {
+        document.getElementById('view-dashboard-' + r).classList.toggle('hidden', r !== currentTier);
+      });
+    }
+
+    function navigate(view) {
+      currentView = view;
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.view === view));
+
+      const sections = [
+        'view-dashboard-customer', 'view-dashboard-staff', 'view-dashboard-admin',
+        'view-create-ticket', 'view-tracking', 'view-chatbot', 'view-settings'
+      ];
+      sections.forEach(id => document.getElementById(id).classList.add('hidden'));
+
+      if (view === 'dashboard') {
+        renderDashboardRole();
+      } else {
+        document.getElementById('view-' + view).classList.remove('hidden');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderCustomerTickets(filter = 'all') {
+      const tbody = document.getElementById('customer-ticket-rows');
+      const filtered = tickets.filter(t => filter === 'all' || t.priority === filter || t.status === filter);
+      tbody.innerHTML = filtered.map(t => {
+        const pClass = t.priority === 'High' ? 'rose' : t.priority === 'Medium' ? 'amber' : 'emerald';
+        const sClass = t.status === 'Resolved' ? 'emerald' : t.status === 'In Progress' ? '' : 'purple';
+        return `<tr class="clickable" onclick="openTicket('${t.id}', '${t.title.replace(/'/g, "\\'")}')">
+          <td class="mono" style="color:var(--cyan);font-weight:600;">${t.id}</td>
+          <td>${t.title}</td>
+          <td><span class="pill ${pClass}">${t.priority}</span></td>
+          <td class="muted">${t.operator}</td>
+          <td><span class="pill ${sClass}">${t.status}</span></td>
+        </tr>`;
+      }).join('');
+    }
+
+    function filterTickets(f) { renderCustomerTickets(f); }
+
+    function openTicket(id, title) {
+      document.getElementById('tracking-id').textContent = id;
+      document.getElementById('tracking-title').textContent = title;
+      navigate('tracking');
+    }
+
+    function renderStaffQueue() {
+      const wrap = document.getElementById('staff-queue-list');
+      wrap.innerHTML = staffQueue.map((q, idx) => `
+        <div class="tier-card ${idx === 0 ? 'active' : ''}" onclick="selectStaffTicket(${idx}, this)">
+          <div class="flex justify-between items-center">
+            <strong>${q.name} <span class="mono" style="color:var(--cyan);font-size:12px;">${q.ticket}</span></strong>
+            <span class="pill ${q.sentiment === 'Urgent' ? 'rose' : q.sentiment === 'High' ? 'amber' : ''}">${q.sentiment}</span>
+          </div>
+          <div class="muted" style="font-size:12px;margin-top:4px;">${q.summary}</div>
+        </div>
+      `).join('');
+    }
+
+    function selectStaffTicket(idx, el) {
+      document.querySelectorAll('#staff-queue-list .tier-card').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      const q = staffQueue[idx];
+      document.getElementById('staff-selected-name').textContent = `${q.name} — ${q.ticket}`;
+      document.getElementById('staff-selected-meta').textContent = `Sentiment: ${q.sentiment} • ${q.summary}`;
+      document.getElementById('staff-selected-body').textContent = q.body;
+      document.getElementById('staff-reply-draft').value = q.draft;
+    }
+
+    function setSeverity(sev, btn) {
+      selectedSeverity = sev;
+      document.querySelectorAll('#severity-pills button').forEach(b => {
+        b.style.borderColor = '';
+        b.style.color = '';
+      });
+      btn.style.borderColor = 'var(--cyan)';
+      btn.style.color = 'var(--cyan)';
+    }
+
+    function submitNewTicket() {
+      const subj = document.getElementById('new-ticket-subject').value.trim();
+      if (!subj) return;
+      const newId = '#TKT-' + Math.floor(8930 + Math.random() * 60);
+      tickets.unshift({ id: newId, title: subj, priority: selectedSeverity, operator: 'Sylvie AI', status: 'In Progress' });
+      renderCustomerTickets('all');
+      openTicket(newId, subj);
+      notify(`Ticket ${newId} dispatched to Neural Mesh!`);
+    }
+
+    function appendTrackingMessage() {
+      const input = document.getElementById('tracking-input');
+      const text = input.value.trim();
+      if (!text) return;
+      const box = document.getElementById('tracking-thread');
+      box.innerHTML += `<div class="msg user"><div class="flex justify-between" style="font-size:11px;margin-bottom:4px;"><strong>You</strong><span class="dim mono">Just now</span></div>${escapeHtml(text)}</div>`;
+      input.value = '';
+      setTimeout(() => {
+        box.innerHTML += `<div class="msg ai"><div class="flex justify-between" style="font-size:11px;margin-bottom:4px;"><strong style="color:var(--cyan);">✦ Sylvie AI Copilot</strong><span class="dim mono">0.8s</span></div>Telemetry updated. Executing container memory check and attaching diagnostic probe to the thread.</div>`;
+        box.scrollTop = box.scrollHeight;
+      }, 450);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function sendSylvieChat() {
+      const input = document.getElementById('sylvie-input');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      askSylvie(text);
+    }
+
+    function askSylvie(prompt) {
+      const box = document.getElementById('sylvie-chat-box');
+      box.innerHTML += `<div class="msg user"><div class="mono" style="font-size:11px;color:#c084fc;margin-bottom:4px;">OPERATIVE • JUST NOW</div>${escapeHtml(prompt)}</div>`;
+      setTimeout(() => {
+        box.innerHTML += `<div class="msg ai"><div class="mono" style="font-size:11px;color:var(--cyan);margin-bottom:4px;">✦ SYLVIE AI • 99.1% CONFIDENCE</div>Processed query: <em>"${escapeHtml(prompt)}"</em>. Cluster telemetry is nominal across 64/64 nodes; recommended remediation patch is staged and ready for 1-click deployment.</div>`;
+        box.scrollTop = box.scrollHeight;
+      }, 400);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function clearChat() {
+      document.getElementById('sylvie-chat-box').innerHTML = `<div class="msg ai"><div class="mono" style="font-size:11px;color:var(--cyan);margin-bottom:4px;">✦ SYLVIE AI</div>Neural context cleared. Ready for new diagnostic commands.</div>`;
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+    }
+
+    let toastTimer;
+    function notify(msg) {
+      const el = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      el.classList.remove('hidden');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.add('hidden'), 3200);
+    }
+
+    renderCustomerTickets('all');
+    renderStaffQueue();
+  </script>
+</body>
+</html>

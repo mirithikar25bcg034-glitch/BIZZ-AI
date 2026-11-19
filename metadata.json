@@ -1,0 +1,6 @@
+{
+  "name": "SmartSupport AI",
+  "description": "Futuristic 3D Spatial Support Suite featuring the Sylvie AI copilot, role-based operational dashboards, and live incident telemetry.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
